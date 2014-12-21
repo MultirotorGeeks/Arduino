@@ -82,3 +82,5 @@ void setup(void)
 
 // Added this comment using eclipse in my main workspace.
 // Added this comment in a separate, test copy of the git repository.
+
+// Added this comment using eclipse in my main workspace, in a new separate branch called paulTest
