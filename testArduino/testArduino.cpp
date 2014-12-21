@@ -81,3 +81,4 @@ void setup(void)
 }
 
 // Added this comment using eclipse in my main workspace.
+// Added this comment in a separate, test copy of the git repository.
