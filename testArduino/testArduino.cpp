@@ -79,3 +79,5 @@ void setup(void)
 
   return;
 }
+
+// Added this comment in a separate, test copy of the git repository.
