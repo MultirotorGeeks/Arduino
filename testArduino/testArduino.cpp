@@ -9,72 +9,68 @@
 #include "ArduRadios.h"
 
 
-//end of add your includes here
+// end of add your includes here
 #ifdef __cplusplus
 extern "C" {
 #endif
-void loop();
-void setup();
+void loop ( );
+void setup ( );
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 #define LOOPTIME_MICROSEC 100000
 #define RADIOFILTCOEFF_NA 20
-#define SERIALBAUD 38400
+#define SERIALBAUD        38400
+#define STRBUFFMAX        256
 
-void loop(void)
+void loop ( void )
 {
-  uint16_t radiovals[4];       // values read from the radio
+  uint16_t             radiovals [ 4 ] = { 1500, 1500, 1000, 1500 }; // values read from the radio
+  char                 str [ STRBUFFMAX ];                           // string to use when printing
 
-  static unsigned long lastTime = 0;       // time of last loop iteration
-  unsigned long thisTime = micros();       // time of this loop iteration
+  static unsigned long lastTime = 0;          // time of last loop iteration
+  unsigned long        thisTime = micros ( ); // time of this loop iteration
 
-  if (thisTime - lastTime >= LOOPTIME_MICROSEC)         // if enough time has elapsed
+  if ( ( thisTime - lastTime ) >= LOOPTIME_MICROSEC ) // if enough time has elapsed
+  {
+    /* Print the time stamp */
+      snprintf ( str, STRBUFFMAX, "Time: %lu.%02lu s",
+      ( thisTime / 1000000 ),
+      ( ( thisTime % 1000000 ) / 10000 ) );
+    Serial.print ( str );
+
+    if ( ArduRadios.read_radio ( radiovals ) == RADIO_RTN_SUCCESS ) // read radios
     {
-      if (ArduRadios.read_radio(radiovals) == RADIO_RTN_SUCCESS)             // read radios
-        {
-          /*
-           * Print Radio Values when a successfully read
-           */
-          Serial.print("Time: ");
-          Serial.print((thisTime / 1000000), DEC);
-          Serial.print(".");
-          Serial.print(((thisTime % 1000000) / 10000), DEC);
-          Serial.print(",  Roll: ");
-          Serial.print(radiovals[CH_ROLL], DEC);
-          Serial.print(",  Pitch: ");
-          Serial.print(radiovals[CH_PITCH], DEC);
-          Serial.print(",  Throttle: ");
-          Serial.print(radiovals[CH_THROTTLE], DEC);
-          Serial.print(",  Rudder: ");
-          Serial.println(radiovals[CH_RUDDER], DEC);
-        }
-      else           // problem occurred reading radios
-        {
-          /*
-           * Print Error Message when radio read failed
-           */
-          Serial.print("Time: ");
-          Serial.print((thisTime / 1000000), DEC);
-          Serial.print(".");
-          Serial.print(((thisTime % 1000000) / 10000), DEC);
-          Serial.println(",  Error Reading Radio Values!");
-        }
+      /* Print Radio Values when a successfully read */
+      snprintf ( str, STRBUFFMAX, ",   Roll: %4u   Pitch: %4u   Throttle: %4u    Yaw: %4u",
+        radiovals [ CH_ROLL ],
+        radiovals [ CH_PITCH ],
+        radiovals [ CH_THROTTLE ],
+        radiovals [ CH_RUDDER ] );
+      Serial.println ( str );
+    }
+    else // problem occurred reading radios
+    {
+      /* Print Error Message when radio read failed */
+      Serial.println ( ",  Error Reading Radio Values!" );
     }
 
-  lastTime = thisTime;
+    lastTime = thisTime;
+
+  }
+
 
   return;
 }
 
-void setup(void)
+void setup ( void )
 {
-  uint8_t filterCoeffs[4] = { RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA,
-                              RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA };    // initialize filter coefficients
+  uint8_t filterCoeffs [ 4 ] = { RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA,
+                                 RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA }; // initialize filter coefficients
 
-  Serial.begin(SERIALBAUD);       // begin serial communications
-  ArduRadios.groundInitFilt(filterCoeffs);       // initialize radio inputs
+  Serial.begin ( SERIALBAUD );                // begin serial communications
+  ArduRadios.groundInitFilt ( filterCoeffs ); // initialize radio inputs
 
   return;
 }
