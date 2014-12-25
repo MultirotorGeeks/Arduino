@@ -227,3 +227,10 @@ pip-log.txt
 
 #All SVN files/folders
 *svn*
+
+# Matlab stuff
+*.asv
+slprj/
+*_ert_rtw/
+*_grt_rtw/
+*.mex32
