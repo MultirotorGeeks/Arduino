@@ -29,7 +29,7 @@
 #define RADIO_RTN_SUCCESS 0     // value to return on success when reading radio
 #define RADIO_RTN_FILTERR 1     // value to return when filtering error occurred while reading radio
 
-//#define DEBUG_RADIO_ISR   // defining this variable causes debug messages to print for checking the radio interrupt service routine
+// #define DEBUG_RADIO_ISR   // defining this variable causes debug messages to print for checking the radio interrupt service routine
 
 // ArduRadio Class Definition
 /*

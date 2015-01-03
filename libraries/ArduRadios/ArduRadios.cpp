@@ -81,17 +81,17 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
 
   use_filters = false; // set flag indicating filters are not used
 
-  pinMode(2,INPUT); // PD2 - INT0     - Rudder in             - INPUT Aileron
-  pinMode(3,INPUT); // PD3 - INT1     - Elevator in             - INPUT Elevator
-  pinMode(11,INPUT);  // PB3 - MOSI/OC2 - INPUT Rudder
-  pinMode(13,INPUT);  // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+  pinMode ( 2,  INPUT ); // PD2 - INT0     - Rudder in             - INPUT Aileron
+  pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
+  pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
+  pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
   // Set Up Timer 1
-  TCCR1A = ((1<<WGM11) | (1<<COM1B1) | (1<<COM1A1)); //Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
-  TCCR1B = (1<<WGM13) | (1<<WGM12) | (1<<CS11); // Clock scaler = 8, 2,000,000 counts per second
-  OCR1A = 3000; // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
-  OCR1B = 3000;   // Elevator
-  ICR1 = TIMERMAXCNT;   //50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
+  TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
+  TCCR1B = ( 1 << WGM13 ) | ( 1 << WGM12 ) | ( 1 << CS11 );        // Clock scaler = 8, 2,000,000 counts per second
+  OCR1A  = 3000;                                                   // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
+  OCR1B  = 3000;                                                   // Elevator
+  ICR1   = TIMERMAXCNT;                                            // 50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
 
   // enable pin change interrupt on PB5 (digital pin 11,13)
   PCMSK0 = _BV ( PCINT3 ) | _BV ( PCINT5 );
@@ -100,10 +100,10 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
   PCMSK2 = _BV ( PCINT18 ) | _BV ( PCINT19 );
 
   // enable pin change interrupt 2 - PCINT23..16
-  PCICR |= _BV(PCIE2);
+  PCICR |= _BV ( PCIE2 );
 
   // enable pin change interrupt 0 -  PCINT7..0
-  PCICR |= _BV(PCIE0);
+  PCICR |= _BV ( PCIE0 );
 
 
   for ( count = 1; count < GNDINIT_NUMREADS + 1; count++ )
@@ -186,19 +186,19 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
     rtn = RADIO_RTN_FILTERR; // if invalid coefficient was specified, return error code
   }
 
-  pinMode(2,INPUT); // PD2 - INT0     - Rudder in             - INPUT Aileron
-  pinMode(3,INPUT); // PD3 - INT1     - Elevator in             - INPUT Elevator
-  pinMode(11,INPUT);  // PB3 - MOSI/OC2 - INPUT Rudder
-  pinMode(13,INPUT);  // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+  pinMode ( 2,  INPUT ); // PD2 - INT0     - Rudder in             - INPUT Aileron
+  pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
+  pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
+  pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
-  pinMode(12,OUTPUT); // PB4 - MISO   - Blue LED pin  - GPS Lock      - GPS Lock
+  pinMode ( 12, OUTPUT ); // PB4 - MISO   - Blue LED pin  - GPS Lock      - GPS Lock
 
   // Set Up Timer 1
-  TCCR1A = ((1<<WGM11) | (1<<COM1B1) | (1<<COM1A1)); //Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
-  TCCR1B = (1<<WGM13) | (1<<WGM12) | (1<<CS11); // Clock scaler = 8, 2,000,000 counts per second
-  OCR1A = 3000; // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
-  OCR1B = 3000;   // Elevator
-  ICR1 = TIMERMAXCNT;   //50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
+  TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
+  TCCR1B = ( 1 << WGM13 ) | ( 1 << WGM12 ) | ( 1 << CS11 );        // Clock scaler = 8, 2,000,000 counts per second
+  OCR1A  = 3000;                                                   // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
+  OCR1B  = 3000;                                                   // Elevator
+  ICR1   = TIMERMAXCNT;                                            // 50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
 
   // enable pin change interrupt on PB5 (digital pin 11,13)
   PCMSK0 = _BV ( PCINT3 ) | _BV ( PCINT5 );
@@ -207,10 +207,10 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
   PCMSK2 = _BV ( PCINT18 ) | _BV ( PCINT19 );
 
   // enable pin change interrupt 2 - PCINT23..16
-  PCICR |= _BV(PCIE2);
+  PCICR |= _BV ( PCIE2 );
 
   // enable pin change interrupt 0 -  PCINT7..0
-  PCICR |= _BV(PCIE0);
+  PCICR |= _BV ( PCIE0 );
 
 
   for ( count = 1; count < GNDINIT_NUMREADS + 1; count++ )
@@ -252,17 +252,17 @@ uint8_t ArduRadio :: airInitNoFilt ( void ) {
 
   use_filters = false; // set flag indicating filters are not used
 
-  pinMode(2,INPUT); // PD2 - INT0     - Rudder in             - INPUT Aileron
-  pinMode(3,INPUT); // PD3 - INT1     - Elevator in             - INPUT Elevator
-  pinMode(11,INPUT);  // PB3 - MOSI/OC2 - INPUT Rudder
-  pinMode(13,INPUT);  // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+  pinMode ( 2,  INPUT ); // PD2 - INT0     - Rudder in             - INPUT Aileron
+  pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
+  pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
+  pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
   // Set Up Timer 1
-  TCCR1A = ((1<<WGM11) | (1<<COM1B1) | (1<<COM1A1)); //Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
-  TCCR1B = (1<<WGM13) | (1<<WGM12) | (1<<CS11); // Clock scaler = 8, 2,000,000 counts per second
-  OCR1A = 3000; // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
-  OCR1B = 3000;   // Elevator
-  ICR1 = TIMERMAXCNT;   //50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
+  TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
+  TCCR1B = ( 1 << WGM13 ) | ( 1 << WGM12 ) | ( 1 << CS11 );        // Clock scaler = 8, 2,000,000 counts per second
+  OCR1A  = 3000;                                                   // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
+  OCR1B  = 3000;                                                   // Elevator
+  ICR1   = TIMERMAXCNT;                                            // 50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
 
   // enable pin change interrupt on PB5 (digital pin 11,13)
   PCMSK0 = _BV ( PCINT3 ) | _BV ( PCINT5 );
@@ -271,10 +271,10 @@ uint8_t ArduRadio :: airInitNoFilt ( void ) {
   PCMSK2 = _BV ( PCINT18 ) | _BV ( PCINT19 );
 
   // enable pin change interrupt 2 - PCINT23..16
-  PCICR |= _BV(PCIE2);
+  PCICR |= _BV ( PCIE2 );
 
   // enable pin change interrupt 0 -  PCINT7..0
-  PCICR |= _BV(PCIE0);
+  PCICR |= _BV ( PCIE0 );
 
   return rtn;
 } // end of airInitNoFilt()
@@ -329,17 +329,17 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
     rtn = RADIO_RTN_FILTERR; // if invalid coefficient was specified, return error code
   }
 
-  pinMode(2,INPUT); // PD2 - INT0     - Rudder in             - INPUT Aileron
-  pinMode(3,INPUT); // PD3 - INT1     - Elevator in             - INPUT Elevator
-  pinMode(11,INPUT);  // PB3 - MOSI/OC2 - INPUT Rudder
-  pinMode(13,INPUT);  // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+  pinMode ( 2,  INPUT ); // PD2 - INT0     - Rudder in             - INPUT Aileron
+  pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
+  pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
+  pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
   // Set Up Timer 1
-  TCCR1A = ((1<<WGM11) | (1<<COM1B1) | (1<<COM1A1)); //Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
-  TCCR1B = (1<<WGM13) | (1<<WGM12) | (1<<CS11); // Clock scaler = 8, 2,000,000 counts per second
-  OCR1A = 3000; // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
-  OCR1B = 3000;   // Elevator
-  ICR1 = TIMERMAXCNT;   //50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
+  TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
+  TCCR1B = ( 1 << WGM13 ) | ( 1 << WGM12 ) | ( 1 << CS11 );        // Clock scaler = 8, 2,000,000 counts per second
+  OCR1A  = 3000;                                                   // Rudder  - multiply your value * 2; for example 3000 = 1500 = 45°; 4000 = 2000 = 90°
+  OCR1B  = 3000;                                                   // Elevator
+  ICR1   = TIMERMAXCNT;                                            // 50hz freq...Datasheet says  (system_freq/prescaler)/target frequency. So (16000000hz/8)/50hz = 40000,
 
   // enable pin change interrupt on PB5 (digital pin 11,13)
   PCMSK0 = _BV ( PCINT3 ) | _BV ( PCINT5 );
@@ -348,10 +348,10 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
   PCMSK2 = _BV ( PCINT18 ) | _BV ( PCINT19 );
 
   // enable pin change interrupt 2 - PCINT23..16
-  PCICR |= _BV(PCIE2);
+  PCICR |= _BV ( PCIE2 );
 
   // enable pin change interrupt 0 -  PCINT7..0
-  PCICR |= _BV(PCIE0);
+  PCICR |= _BV ( PCIE0 );
 
   return rtn;
 } // end of airInitFilt()
@@ -505,13 +505,13 @@ static void Timer_0_1_ISR ( void ) {
 #ifdef DEBUG_RADIO_ISR
     if ( lastPrintCnt0++ >= 999 && Serial )
     {
-      if ( digitalRead(12) )
+      if ( digitalRead ( 12 ) )
       {
-        digitalWrite(12,LOW);
+        digitalWrite ( 12, LOW );
       }
       else
       {
-        digitalWrite(12,HIGH);
+        digitalWrite ( 12, HIGH );
       }
       lastPrintCnt0 = 0;
       snprintf ( buf, 256, "Channel 0 Timer Counts Elapsed: %u\n", timer0diff );
@@ -654,9 +654,9 @@ ISR ( PCINT2_vect )
     printedStart = true;
   }
   #endif
-  Timer_0_1_ISR ( );                           // call the timer 0&1 interrupt service routine
+  Timer_0_1_ISR ( ); // call the timer 0&1 interrupt service routine
   return;
-}   // end of ISR(PCINT2_vect)
+} // end of ISR(PCINT2_vect)
 
 /*
  * Class:   NA
@@ -675,6 +675,6 @@ ISR ( PCINT0_vect )
     printedStart = true;
   }
   #endif
-  Timer_2_3_ISR ( );                           // call the timer 2&3 interrupt service routine
+  Timer_2_3_ISR ( ); // call the timer 2&3 interrupt service routine
   return;
-}   // end of ISR(PCINT2_vect)
+} // end of ISR(PCINT2_vect)
