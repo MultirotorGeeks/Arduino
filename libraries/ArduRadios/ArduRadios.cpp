@@ -73,11 +73,11 @@ ArduRadio :: ArduRadio ( ) {
  *                              with no filtering.
  */
 uint8_t ArduRadio :: groundInitNoFilt ( void ) {
-  uint8_t  rtn                  = RADIO_RTN_SUCCESS; // initial return value indicating success.  Will be replaced if failure occurs
-  uint16_t lastRadioVals [ 4 ];                      // holds the latest radio reading taken while performing average calculation
-  int16_t  meanRadioVals [ 4 ]  = { 0 };             // holds the mean value of radio readings so far times 16 (for better precision)
-  int16_t  deltaRadioVals [ 4 ] = { 0 };             // holds the difference between latest and mean readings times 16 (for better precision)
-  uint16_t count;                                    // counter for loop which takes radio readings
+  uint8_t  rtn                  = RADIO_RTN_SUCCESS;                                                                     // initial return value indicating success.  Will be replaced if failure occurs
+  uint16_t lastRadioVals [ 4 ];                                                                                          // holds the latest radio reading taken while performing average calculation
+  int32_t  meanRadioVals [ 4 ]  = { ROLL_INITIAL << 4, PITCH_INITIAL << 4, THROTTLE_INITIAL << 4, RUDDER_INITIAL << 4 }; // holds the mean value of radio readings so far times 16 (for better precision)
+  int32_t  deltaRadioVals [ 4 ] = { 0, 0, 0, 0 };                                                                        // holds the difference between latest and mean readings times 16 (for better precision)
+  uint16_t count;                                                                                                        // counter for loop which takes radio readings
 
   use_filters = false; // set flag indicating filters are not used
 
@@ -85,6 +85,7 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
   pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
   pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
   pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+
 
   // Set Up Timer 1
   TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
@@ -106,14 +107,14 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
   PCICR |= _BV ( PCIE0 );
 
 
-  for ( count = 1; count < GNDINIT_NUMREADS + 1; count++ )
+  for ( count = 1; count <= GNDINIT_NUMREADS; count++ )
   {
     read_radio ( lastRadioVals ); // read the radios and store the readings in the lastRadioVals array
 
-    deltaRadioVals [ CH_ROLL ]     = ( ( (int16_t) lastRadioVals [ CH_ROLL ] ) << 4 ) - meanRadioVals [ CH_ROLL ];         // calculate delta between roll channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_PITCH ]    = ( ( (int16_t) lastRadioVals [ CH_PITCH ] ) << 4 ) - meanRadioVals [ CH_PITCH ];       // calculate delta between pitch channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_THROTTLE ] = ( ( (int16_t) lastRadioVals [ CH_THROTTLE ] ) << 4 ) - meanRadioVals [ CH_THROTTLE ]; // calculate delta between throttle channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_RUDDER ]   = ( ( (int16_t) lastRadioVals [ CH_RUDDER ] ) << 4 ) - meanRadioVals [ CH_RUDDER ];     // calculate delta between rudder channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_ROLL ]     = ( ( (int32_t) lastRadioVals [ CH_ROLL ] ) << 4 ) - meanRadioVals [ CH_ROLL ];         // calculate delta between roll channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_PITCH ]    = ( ( (int32_t) lastRadioVals [ CH_PITCH ] ) << 4 ) - meanRadioVals [ CH_PITCH ];       // calculate delta between pitch channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_THROTTLE ] = ( ( (int32_t) lastRadioVals [ CH_THROTTLE ] ) << 4 ) - meanRadioVals [ CH_THROTTLE ]; // calculate delta between throttle channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_RUDDER ]   = ( ( (int32_t) lastRadioVals [ CH_RUDDER ] ) << 4 ) - meanRadioVals [ CH_RUDDER ];     // calculate delta between rudder channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
 
     meanRadioVals [ CH_ROLL ]     += ( deltaRadioVals [ CH_ROLL ] / count );     // divide delta by the number of times a reading has been taken and add this to the mean.
     meanRadioVals [ CH_PITCH ]    += ( deltaRadioVals [ CH_PITCH ] / count );    // divide delta by the number of times a reading has been taken and add this to the mean.
@@ -146,13 +147,12 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
  *                               with specified filter coefficients.
  */
 uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
-  uint8_t  rtn                  = RADIO_RTN_SUCCESS; // initial return value indicating success.  Will be replaced if failure occurs
-  uint16_t lastRadioVals [ 4 ];                      // holds the latest radio reading taken while performing average calculation
-  int16_t  meanRadioVals [ 4 ]  = { 0 };             // holds the mean value of radio readings so far times 16 (for better precision)
-  int16_t  deltaRadioVals [ 4 ] = { 0 };             // holds the difference between latest and mean readings times 16 (for better precision)
-  uint16_t count;                                    // counter for loop which takes radio readings
+  uint8_t  rtn                  = RADIO_RTN_SUCCESS;                                                                     // initial return value indicating success.  Will be replaced if failure occurs
+  uint16_t lastRadioVals [ 4 ];                                                                                          // holds the latest radio reading taken while performing average calculation
+  int32_t  meanRadioVals [ 4 ]  = { ROLL_INITIAL << 4, PITCH_INITIAL << 4, THROTTLE_INITIAL << 4, RUDDER_INITIAL << 4 }; // holds the mean value of radio readings so far times 16 (for better precision)
+  int32_t  deltaRadioVals [ 4 ] = { 0, 0, 0, 0 };                                                                        // holds the difference between latest and mean readings times 16 (for better precision)
+  uint16_t count;                                                                                                        // counter for loop which takes radio readings
 
-  use_filters = true;                // set flag indicating filters are used
   if ( filtCoeffs [ CH_ROLL ] < 32 ) // check to ensure filter coefficient is less than 32
   {
     filtcoeffs [ CH_ROLL ] = filtCoeffs [ CH_ROLL ]; // store coefficient
@@ -191,7 +191,6 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
   pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
   pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
-  pinMode ( 12, OUTPUT ); // PB4 - MISO   - Blue LED pin  - GPS Lock      - GPS Lock
 
   // Set Up Timer 1
   TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
@@ -210,17 +209,18 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
   PCICR |= _BV ( PCIE2 );
 
   // enable pin change interrupt 0 -  PCINT7..0
-  PCICR |= _BV ( PCIE0 );
+  PCICR      |= _BV ( PCIE0 );
 
+  use_filters = false; // start without filters, just while doing calibration
 
-  for ( count = 1; count < GNDINIT_NUMREADS + 1; count++ )
+  for ( count = 1; count <= GNDINIT_NUMREADS; count++ )
   {
     read_radio ( lastRadioVals ); // read the radios and store the readings in the lastRadioVals array
 
-    deltaRadioVals [ CH_ROLL ]     = ( ( (int16_t) lastRadioVals [ CH_ROLL ] ) << 4 ) - meanRadioVals [ CH_ROLL ];         // calculate delta between roll channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_PITCH ]    = ( ( (int16_t) lastRadioVals [ CH_PITCH ] ) << 4 ) - meanRadioVals [ CH_PITCH ];       // calculate delta between pitch channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_THROTTLE ] = ( ( (int16_t) lastRadioVals [ CH_THROTTLE ] ) << 4 ) - meanRadioVals [ CH_THROTTLE ]; // calculate delta between throttle channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
-    deltaRadioVals [ CH_RUDDER ]   = ( ( (int16_t) lastRadioVals [ CH_RUDDER ] ) << 4 ) - meanRadioVals [ CH_RUDDER ];     // calculate delta between rudder channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_ROLL ]     = ( ( (int32_t) lastRadioVals [ CH_ROLL ] ) << 4 ) - meanRadioVals [ CH_ROLL ];         // calculate delta between roll channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_PITCH ]    = ( ( (int32_t) lastRadioVals [ CH_PITCH ] ) << 4 ) - meanRadioVals [ CH_PITCH ];       // calculate delta between pitch channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_THROTTLE ] = ( ( (int32_t) lastRadioVals [ CH_THROTTLE ] ) << 4 ) - meanRadioVals [ CH_THROTTLE ]; // calculate delta between throttle channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
+    deltaRadioVals [ CH_RUDDER ]   = ( ( (int32_t) lastRadioVals [ CH_RUDDER ] ) << 4 ) - meanRadioVals [ CH_RUDDER ];     // calculate delta between rudder channel reading and mean.  Left shift by four (multiply by 16) will give better precision when dividing this number by the number of counts.
 
     meanRadioVals [ CH_ROLL ]     += ( deltaRadioVals [ CH_ROLL ] / count );     // divide delta by the number of times a reading has been taken and add this to the mean.
     meanRadioVals [ CH_PITCH ]    += ( deltaRadioVals [ CH_PITCH ] / count );    // divide delta by the number of times a reading has been taken and add this to the mean.
@@ -234,6 +234,9 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
   radio_offsets [ CH_PITCH ]    = PITCH_INITIAL - ( meanRadioVals [ CH_PITCH ] >> 4 );       // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
   radio_offsets [ CH_THROTTLE ] = THROTTLE_INITIAL - ( meanRadioVals [ CH_THROTTLE ] >> 4 ); // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
   radio_offsets [ CH_RUDDER ]   = RUDDER_INITIAL - ( meanRadioVals [ CH_RUDDER ] >> 4 );     // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
+
+  if ( rtn == RADIO_RTN_SUCCESS ) // if no problems occurred while setting filter coefficient
+    use_filters = true;           // set flag indicating filters are used
 
   return rtn;
 } // end of groundInitFilt()
@@ -256,6 +259,7 @@ uint8_t ArduRadio :: airInitNoFilt ( void ) {
   pinMode ( 3,  INPUT ); // PD3 - INT1     - Elevator in             - INPUT Elevator
   pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
   pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
+
 
   // Set Up Timer 1
   TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
@@ -295,7 +299,7 @@ uint8_t ArduRadio :: airInitNoFilt ( void ) {
 uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
   uint8_t rtn = RADIO_RTN_SUCCESS; // initial return value indicating success.  Will be replaced if failure occurs
 
-  use_filters = true;                // set flag indicating filters are used
+  use_filters = false;               // start with filter disabled (will be turned on later)
   if ( filtCoeffs [ CH_ROLL ] < 32 ) // check to ensure filter coefficient is less than 32
   {
     filtcoeffs [ CH_ROLL ] = filtCoeffs [ CH_ROLL ]; // store coefficient
@@ -334,6 +338,7 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
   pinMode ( 11, INPUT ); // PB3 - MOSI/OC2 - INPUT Rudder
   pinMode ( 13, INPUT ); // PB5 - SCK    - Yellow LED pin            - INPUT Throttle
 
+
   // Set Up Timer 1
   TCCR1A = ( ( 1 << WGM11 ) | ( 1 << COM1B1 ) | ( 1 << COM1A1 ) ); // Fast PWM: ICR1=TOP, OCR1x=BOTTOM,TOV1=TOP
   TCCR1B = ( 1 << WGM13 ) | ( 1 << WGM12 ) | ( 1 << CS11 );        // Clock scaler = 8, 2,000,000 counts per second
@@ -353,6 +358,9 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
   // enable pin change interrupt 0 -  PCINT7..0
   PCICR |= _BV ( PCIE0 );
 
+  if ( rtn == RADIO_RTN_SUCCESS ) // if no problems occurred while setting filter coefficient
+    use_filters = true;           // set flag indicating filters are used
+
   return rtn;
 } // end of airInitFilt()
 
@@ -367,6 +375,8 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
 uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
   uint8_t  rtn = RADIO_RTN_SUCCESS; // value to return if succesful
   uint16_t tempvalue;               // temporary value used when filtering
+
+
 
   if ( use_filters ) // if filters are used
   {
@@ -445,21 +455,13 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
 
   }
 
-  if ( rtn == RADIO_RTN_FILTERR ) // if no failures occurred
+  if ( rtn == RADIO_RTN_SUCCESS ) // if no failures occurred
   {
     radiovals [ CH_ROLL ]     = radio_in [ CH_ROLL ];     // store roll channel value
     radiovals [ CH_PITCH ]    = radio_in [ CH_PITCH ];    // store pitch channel value
     radiovals [ CH_THROTTLE ] = radio_in [ CH_THROTTLE ]; // store throttle channel value
     radiovals [ CH_RUDDER ]   = radio_in [ CH_RUDDER ];   // store rudder channel value
   }
-
-// char str[256];						// string to use when printing
-// snprintf(str, 256, "Roll: %4d    Pitch: %4d    Throttle: %4d    Yaw: %4d\n",
-// radio_in[CH_ROLL],
-// radio_in[CH_PITCH],
-// radio_in[CH_THROTTLE],
-// radio_in[CH_RUDDER]);
-// Serial.print(str);
 
   return rtn;
 } // end of read_radio()
@@ -480,12 +482,6 @@ extern "C" {
 static void Timer_0_1_ISR ( void ) {
   uint16_t cnt = TCNT1; // read the timer value
 
-#ifdef DEBUG_RADIO_ISR
-  static uint16_t lastPrintCnt0 = 999;
-  static uint16_t lastPrintCnt1 = 999;
-  char            buf [ 256 ];
-#endif
-
   // Check for rising or falling edge on pin 2 (radio channel 0)
   if ( PIND & B00000100 ) // if radio channel 0 (pin 2) is high
   {
@@ -502,22 +498,6 @@ static void Timer_0_1_ISR ( void ) {
       timer0diff = ( cnt + TIMERMAXCNT - timer0count );  // track the timer difference between rising and falling edges
     else
       timer0diff = ( cnt - timer0count ); // track the timer difference between rising and falling edges
-#ifdef DEBUG_RADIO_ISR
-    if ( lastPrintCnt0++ >= 999 && Serial )
-    {
-      if ( digitalRead ( 12 ) )
-      {
-        digitalWrite ( 12, LOW );
-      }
-      else
-      {
-        digitalWrite ( 12, HIGH );
-      }
-      lastPrintCnt0 = 0;
-      snprintf ( buf, 256, "Channel 0 Timer Counts Elapsed: %u\n", timer0diff );
-      Serial.print ( buf );
-    }
-#endif
   }
 
   // Check for rising or falling edge on pin 3 (radio channel 1)
@@ -536,14 +516,6 @@ static void Timer_0_1_ISR ( void ) {
       timer1diff = ( cnt + TIMERMAXCNT - timer1count );  // track the timer difference between rising and falling edges
     else
       timer1diff = ( cnt - timer1count ); // track the timer difference between rising and falling edges
-#ifdef DEBUG_RADIO_ISR
-    if ( lastPrintCnt1++ >= 999 && Serial )
-    {
-      lastPrintCnt1 = 0;
-      snprintf ( buf, 256, "Channel 1 Timer Counts Elapsed: %u\n", timer1diff );
-      Serial.print ( buf );
-    }
-#endif
   }
   return;
 } // end of Timer_0_1_ISR()
@@ -561,12 +533,6 @@ static void Timer_0_1_ISR ( void ) {
 static void Timer_2_3_ISR ( void ) {
   uint16_t cnt = TCNT1; // read the timer value
 
-#ifdef DEBUG_RADIO_ISR
-  static uint16_t lastPrintCnt2 = 999;
-  static uint16_t lastPrintCnt3 = 999;
-  char            buf [ 256 ];
-#endif
-
 #if THROTTLE_PIN == 11 // if pin 11 is selected as the throttle
   if ( PINB & 8 )      // if radio channel 2 (pin 11) is high
   {
@@ -576,6 +542,8 @@ static void Timer_2_3_ISR ( void ) {
 #else
 #error "Invalid Pin selection for Throttle Radio Input.  Please select either pin 11 or 13 using the THROTTLE_PIN definition."
 #endif
+
+
     if ( ch2_read == false ) // if radio channel 2 is high and its read value was low last time this interrupt was called (rising edge occurred)
     {
       ch2_read    = true; // mark that the value is read high this time
@@ -589,14 +557,6 @@ static void Timer_2_3_ISR ( void ) {
       timer2diff = ( cnt + TIMERMAXCNT - timer2count );  // track the timer difference between rising and falling edges
     else
       timer2diff = ( cnt - timer2count ); // track the timer difference between rising and falling edges
-#ifdef DEBUG_RADIO_ISR
-    if ( lastPrintCnt2++ >= 999 && Serial )
-    {
-      lastPrintCnt2 = 0;
-      snprintf ( buf, 256, "Channel 2 Timer Counts Elapsed: %u\n", timer2diff );
-      Serial.print ( buf );
-    }
-#endif
   }
 
 #if THROTTLE_PIN == 11 // if pin 11 is selected as the throttle
@@ -621,21 +581,12 @@ static void Timer_2_3_ISR ( void ) {
       timer3diff = ( cnt + TIMERMAXCNT - timer3count );  // track the timer difference between rising and falling edges
     else
       timer3diff = ( cnt - timer3count ); // track the timer difference between rising and falling edges
-#ifdef DEBUG_RADIO_ISR
-    if ( lastPrintCnt3++ >= 999 && Serial )
-    {
-      lastPrintCnt3 = 0;
-      snprintf ( buf, 256, "Channel 3 Timer Counts Elapsed: %u\n", timer3diff );
-      Serial.print ( buf );
-    }
-#endif
   }
   return;
 } // end of Timer_2_3_ISR()
 
-}
-
 // Global Functions
+
 
 /*
  * Class:   NA
@@ -646,15 +597,8 @@ static void Timer_2_3_ISR ( void ) {
  */
 ISR ( PCINT2_vect )
 {
-  #ifdef DEBUG_RADIO_ISR
-  static volatile boolean printedStart = false;
-  if ( printedStart == false && Serial )
-  {
-    Serial.print ( "Started PCINT2 interrupt vector.\n" );
-    printedStart = true;
-  }
-  #endif
   Timer_0_1_ISR ( ); // call the timer 0&1 interrupt service routine
+
   return;
 } // end of ISR(PCINT2_vect)
 
@@ -667,14 +611,8 @@ ISR ( PCINT2_vect )
  */
 ISR ( PCINT0_vect )
 {
-  #ifdef DEBUG_RADIO_ISR
-  static volatile boolean printedStart = false;
-  if ( printedStart == false && Serial )
-  {
-    Serial.print ( "Started PCINT0 interrupt vector.\n" );
-    printedStart = true;
-  }
-  #endif
   Timer_2_3_ISR ( ); // call the timer 2&3 interrupt service routine
   return;
 } // end of ISR(PCINT2_vect)
+
+}

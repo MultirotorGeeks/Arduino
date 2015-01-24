@@ -25,11 +25,9 @@
 #define RADIOPWM_MAX      2000  // maximum time value of any radio pwm pulse (microseconds)
 #define RADIOPWM_MIN      1000  // minimum time value of any radio pwm pulse (microseconds)
 #define GNDINIT_NUMREADS  100   // number of readings to take while calculating average readings during ground initialization
-#define GNDINIT_DELAY_MS  10    // number of milliseconds delay inbetween each reading for average calculation during ground initialization
+#define GNDINIT_DELAY_MS  20    // number of milliseconds delay inbetween each reading for average calculation during ground initialization
 #define RADIO_RTN_SUCCESS 0     // value to return on success when reading radio
 #define RADIO_RTN_FILTERR 1     // value to return when filtering error occurred while reading radio
-
-// #define DEBUG_RADIO_ISR   // defining this variable causes debug messages to print for checking the radio interrupt service routine
 
 // ArduRadio Class Definition
 /*
