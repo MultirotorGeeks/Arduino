@@ -1,0 +1,105 @@
+LIBRARY NAME:
+
+  HMC5883
+  
+AUTHOR:
+
+  Paul Rancuret (pmrancuret@gmail.com)
+
+DESCRIPTION:
+
+  This HMC5883 project provides the ability to communicate with the HMC5883 
+  magnetic compass chip on the ArduPilot board.
+  
+  See the header file HMC5883.h for descriptions of each of the public 
+  functions provided in the HMC5883 class, and how they are used.
+
+DEPENDENCIES:
+
+  avrfix
+  Wire
+  Arduino_Duemilanove_w__ATmega328
+  
+LIBRARY PROJECT SETUP:
+
+  This project was created using Eclipse IDE for C/C++ developers (version
+  4.4.1), with the AVR Eclipse plugin (version 2.4.1) installed.
+  
+  To create this project, click on File->New->C++ Project... and then enter
+  GyroKalman as the project name and select the directory containing this 
+  README file as the project location.  Assuming you have checked this out from
+  a local git repository cloned from https://github.com/pmrancuret/Arduino, 
+  this path should be <YourPathToGitRepoLoc>\Arduino\libraries\HMC5883.  
+  
+  Then, under 'Project Type', select 'Empty Project' under the 'AVR Cross 
+  Target Static Library' type, and ensure AVR-GCC is selected as the toolchain.  
+  Click 'Next', then un-select the 'Debug' build configuration if you don't use
+  it, and click 'Next' again.  Finally, enter the correct processor type and 
+  clock speed you are using, and click Finish.  For the ArduPilot board, the
+  processor type is ATmega328p, and the clock speed is 16000000.
+  
+  Once the project is created, ensure the path for finding the avrfix.h, 
+  Arduino.h, and Wire.h files are specified.  To do this, right click the 
+  project and select Properties.  Then, expand the C/C++ build submenu on the 
+  left and click on 'Settings.'  In the right side, under the 'Tool Settings' 
+  tab, expand both the 'AVR Compiler' and the 'AVR C++ Compiler' submenus.  
+  Under each of these, select Directories, then click the 'Add...' button at 
+  the top right (with the green + sign).  In this dialog, enter the path to the 
+  directory containing the avrfix.h, Arduino.h, and Wire.h files.
+  If your eclipse workspace is located at the top 'Arduino' folder of this
+  git repository, and the full repository is checked out including libraries, 
+  then the following path should work for the libraries:
+    "${workspace_loc}/libraries/avrfix"
+    "${workspace_loc}/libraries/ArduPilotBoardSupport"
+    "${workspace_loc}/libraries/Wire"
+  
+  Once this project has been set up correctly, the library can be built by
+  right clicking the project and selecting 'Build.'  This should create a file
+  called libHMC5883.a under the Release directory.  
+  
+TARGET APPLICATION PROJECT SETUP:
+
+  This library can be used in eclipse C++ projects of type 'AVR Cross Target
+  Application,' using the 'AVR-GCC' toolchain.
+  
+  In order to use this library in a target application project, this library
+  file, the avrfix library file, the Wire library file, and the Arduino library
+  file must all be linked into the build.  To do this, right click the project 
+  and select Properties.  Then, expand the 'C/C++ build' submenu on the left 
+  and click on 'Settings.'  In the right side, under the 'Tool Settings' tab, 
+  expand the 'AVR C++ Linker' submenu and click on 'Libraries.'  In the 
+  'Libraries (-l)' box on the right, add the four libraries, called HMC5883, 
+  avrfix, Wire, and Arduino_Duemilanove_w__ATmega328 (or whatever library is 
+  needed for your board).  Note that you should NOT enter the prefix 'lib' at 
+  the beginning, or the extension '.a' at the end of these names.  Also, ensure 
+  the HMC5883 library is listed above the avrfix, Wire, and 
+  Arduino_Duemilanove_w__ATmega328 libraries.  In the 'Libraries Path (-L)' box 
+  on the lower right, add the paths to the four libraries.  If your eclipse 
+  workspace is located at the top 'Arduino' folder of this git repository, and 
+  the full repository is checked out including libraries, then the following 
+  paths should work for the ATmega328p microcontroller:
+    "${workspace_loc}/libraries/HMC5883/Release"
+    "${workspace_loc}/libraries/avrfix"
+    "${workspace_loc}/libraries/Wire/Release"
+    "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  The target application project will also need to have include paths set up to
+  find the avrfix.h, Wire.h, and Arduino.h header files.  To do this, follow
+  the same instructions as the above section for adding include paths in
+  the library project setup.  This time, ensure the path to this library is
+  also provided.  If your eclipse workspace is located at the top 'Arduino' 
+  folder of this git repository, and the full repository is checked out 
+  including libraries, then the following paths should work for the 
+  ATmega328p library:
+    "${workspace_loc}/libraries/HMC5883"
+    "${workspace_loc}/libraries/avrfix"
+    "${workspace_loc}/libraries/Wire"
+    "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Finally, ensure that any source file in your target application project which
+  uses functions from this library first includes the library header file using:
+    #include "HMC5883.h"
+  
+EXAMPLE USAGE:
+
+  None currently provided.
