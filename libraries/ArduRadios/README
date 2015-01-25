@@ -1,0 +1,212 @@
+LIBRARY NAME:
+
+  ArduRadios
+  
+AUTHOR:
+
+  Paul Rancuret (pmrancuret@gmail.com)
+
+DESCRIPTION:
+
+  This ArduRadios project creates a static library which can be used to 
+  read radio signals from four channels of a standard PWM R/C radio into
+  the Arduino on the ArduPilot board.
+  
+  This library assumes that the Roll channel PWM is connected to digital pin 2,
+  Pitch is connected to pin 3, Throttle is connected to pin 13, and Yaw is
+  connected to pin 11.  The AVR microcontroller's on-board timer 1 is used
+  along with interrupts PCINT0 and PCINT2 to calculate the duty cycle of the 
+  PWM signal received on each of these pins. These pulse widths will each range 
+  from between 1000 and 2000 microseconds.  This library is not compatible with
+  any other functions which set up timer 1 or either interrupt differently.
+  
+  The Radios class provided in this library can be initialized with either a 
+  ground or air initialization function.  The ground initializations assume
+  that the controller is in its standard condition (throttle at zero, while
+  roll, pitch, and yaw are centered) and takes multiple samples over time to 
+  calculate offsets which ensure these settings are calibrated.
+  
+  The Radios can also be initialized to use filters, or to not use filters.  
+  When filters are used, an integer filter coefficient ranging from 0 to 31 
+  must be supplied.  Higher numbers will result in a slower filter response
+  (i.e. a lower filter cutoff frequency).  The actual cutoff frequency will 
+  depend both on this coefficient and the rate at which the radio signals are
+  read.  Setting the coefficient to zero is equivalent to not using a filter
+  on that channel.
+  
+  Depending on whether or not you desire filtering, and whether or not you want
+  a ground initialization, the ArduRadios class can be initialized with one of
+  the following function calls:
+    ArduRadios.groundInitNoFilt(void);
+    ArduRadios.groundInitFilt(uint8_t* filtCoeffs);
+    ArduRadios.airInitNoFilt(void);
+    ArduRadios.airInitFilt(uint8_t* filtCoeffs);
+    
+  In the above functions, the uint8_t* filtCoeffs is a pointer to an array of 
+  four filter coefficients, for the Roll, Pitch, Throttle, and Yaw channels,
+  respectively.
+  
+  After the ArduRadios class is initialized, the radio channels can be read 
+  using the ArduRadios.read_radio(uint16_t* radiovals) function.  Here,
+  the uint16_t* radiovals is a pointer to an array to place the four radio
+  signals for Roll, Pitch, Throttle, and Yaw, respectively.  The numbers placed
+  into each element of the radiovals array (upon success) will range from
+  between 1000 and 2000, and represent the number of microseconds of the PWM
+  pulse width for that channel.
+
+DEPENDENCIES:
+
+  When used in a target application project, this library also requires that
+  the arduino board support library is linked as well.  For instance, the
+  ATmega328p chip on the ArduPilot or Duemilanove board requires linking the 
+  Arduino_Duemilanove_w__ATmega328 library in addition to this ArduRadios one.
+  
+LIBRARY PROJECT SETUP:
+
+  This project was created using Eclipse IDE for C/C++ developers (version
+  4.4.1), with the AVR Eclipse plugin (version 2.4.1) installed.
+  
+  To create this project, click on File->New->C++ Project... and then enter
+  ArduRadios as the project name and select the directory containing this 
+  README file as the project location.  Assuming you have checked this out from
+  a local git repository cloned from https://github.com/pmrancuret/Arduino, 
+  this path should be <YourPathToGitRepoLoc>\Arduino\libraries\ArduRadios.  
+  
+  Then, under 'Project Type', select 'Empty Project' under the 'AVR Cross 
+  Target Static Library' type, and ensure AVR-GCC is selected as the toolchain.  
+  Click 'Next', then un-select the 'Debug' build configuration if you don't use
+  it, and click 'Next' again.  Finally, enter the correct processor type and 
+  clock speed you are using, and click Finish.  For the ArduPilot board, the
+  processor type is ATmega328p, and the clock speed is 16000000.
+  
+  Once the project is created, ensure the path for finding the Arduino.h file
+  is added.  To do this, right click the project and select Properties.  Then, 
+  expand the C/C++ build submenu on the left and click on 'Settings.'  In the 
+  right side, under the 'Tool Settings' tab, expand both the 'AVR Compiler' and
+  the 'AVR C++ Compiler' submenus.  Under each of these, select Directories, 
+  then click the 'Add...' button at the top right (with the green + sign).  In
+  this dialog, enter the path to the directory containing the Arduino.h file.
+  If your eclipse workspace is located at the top 'Arduino' folder of this
+  git repository, and the full repository is checked out including libraries, 
+  then the following path should work for the ATmega328p library:
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Once this project has been set up correctly, the library can be built by
+  right clicking the project and selecting 'Build.'  This should create a file
+  called libArduRadios.a under the Release directory.  
+  
+TARGET APPLICATION PROJECT SETUP:
+
+  This library can be used in eclipse C++ projects of type 'AVR Cross Target
+  Application,' using the 'AVR-GCC' toolchain.
+  
+  In order to use this library in a target application project, this library
+  file and the Arduino support library must be linked into the build.  To do 
+  this, right click the project and select Properties.  Then, expand the 'C/C++ 
+  build' submenu on the left and click on 'Settings.'  In the 
+  right side, under the 'Tool Settings' tab, expand the 'AVR C++ Linker' 
+  submenu and click on 'Libraries.'  In the 'Libraries (-l)' box on the right, 
+  add the two libraries, called ArduRadios and Arduino_Duemilanove_w__ATmega328 
+  (or whatever library is needed for your board).  Note that you should NOT 
+  enter the prefix 'lib' at the beginning, or the extension '.a' at the end of 
+  these names.  Also, ensure the ArduRadios library is listed above the Arduino 
+  board library.  In the 'Libraries Path (-L)' box on the lower right, add the
+  paths to the two libraries.  If your eclipse workspace is located at the top 
+  'Arduino' folder of this git repository, and the full repository is checked 
+  out including libraries, then the following paths should work for the 
+  ATmega328p microcontroller:
+  "${workspace_loc}/libraries/ArduRadios/Release"
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  The target application project will also need to have include paths set up to
+  find the Arduino.h header file, and the ArduRadios.h header file.  To do this,
+  follow the same instructions as the above section for adding include paths in
+  the library project setup.  This time, ensure paths to both the Arduino.h
+  and to this library are provided.  If your eclipse workspace is located at 
+  the top 'Arduino' folder of this git repository, and the full repository is 
+  checked out including libraries, then the following paths should work for the 
+  ATmega328p library:
+  "${workspace_loc}/libraries/ArduRadios"
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Finally, ensure that any source file in your target application project which
+  uses functions from this library first includes the library header file using:
+  #include "ArduRadios.h"
+  
+EXAMPLE USAGE:
+
+  See the code excerpt from below this paragraph for an example of how to 
+  implement and test the ArduRadios library.  This example first initializes
+  the ArduRadios class in the setup() function, then goes into the loop()
+  function, which continually reads the radio signals and prints them out
+  over the serial connection at a baud rate of 38400.  This source code must
+  be placed in an 'AVR Cross Target Application' project within eclipse, set
+  up as described above in order to work correctly.
+
+#include <Arduino.h>
+#include "ArduRadios.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+void loop ( );
+void setup ( );
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#define LOOPTIME_MICROSEC 100000
+#define RADIOFILTCOEFF_NA 20
+#define SERIALBAUD        38400
+#define STRBUFFMAX        256
+
+void loop ( void )
+{
+  uint16_t             radiovals [ 4 ] = { 1500, 1500, 1000, 1500 }; // values read from the radio
+  char                 str [ STRBUFFMAX ];                           // string to use when printing
+
+  static unsigned long lastTime = 0;          // time of last loop iteration
+  unsigned long        thisTime = micros ( ); // time of this loop iteration
+
+  if ( ( thisTime - lastTime ) >= LOOPTIME_MICROSEC ) // if enough time has elapsed
+  {
+    /* Print the time stamp */
+      snprintf ( str, STRBUFFMAX, "Time: %lu.%02lu s",
+      ( thisTime / 1000000 ),
+      ( ( thisTime % 1000000 ) / 10000 ) );
+    Serial.print ( str );
+
+    if ( ArduRadios.read_radio ( radiovals ) == RADIO_RTN_SUCCESS ) // read radios
+    {
+      /* Print Radio Values when a successfully read */
+      snprintf ( str, STRBUFFMAX, ",   Roll: %4u   Pitch: %4u   Throttle: %4u    Yaw: %4u",
+        radiovals [ CH_ROLL ],
+        radiovals [ CH_PITCH ],
+        radiovals [ CH_THROTTLE ],
+        radiovals [ CH_RUDDER ] );
+      Serial.println ( str );
+    }
+    else // problem occurred reading radios
+    {
+      /* Print Error Message when radio read failed */
+      Serial.println ( ",  Error Reading Radio Values!" );
+    }
+
+    lastTime = thisTime;
+
+  }
+
+
+  return;
+}
+
+void setup ( void )
+{
+  uint8_t filterCoeffs [ 4 ] = { RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA,
+                                 RADIOFILTCOEFF_NA, RADIOFILTCOEFF_NA }; // initialize filter coefficients
+
+  Serial.begin ( SERIALBAUD );                // begin serial communications
+  ArduRadios.groundInitFilt ( filterCoeffs ); // initialize radio inputs
+
+  return;
+}
