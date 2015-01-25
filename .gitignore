@@ -8,9 +8,9 @@
 # Object/Libraries/Binaries
 *.o
 *.d
-# *.a
+*.a
 *.elf
-# *.hex
+*.hex
 *.lss
 *.eep
 
@@ -54,7 +54,7 @@ local.properties
 # Build results
 
 [Dd]ebug/
-# [Rr]elease/
+[Rr]elease/
 x64/
 build/
 [Bb]in/
