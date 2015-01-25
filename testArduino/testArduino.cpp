@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include "ArduRadios.h"
+#include "ArduEEPROM.h"
 
 
 // end of add your includes here
