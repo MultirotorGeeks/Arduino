@@ -14,6 +14,13 @@ This repository is used as an eclipse workspace, containing Arduino projects for
 
 The [Eclipse IDE for C/C++ Developers](https://eclipse.org/downloads/packages/eclipse-ide-cc-developers/keplersr2) was used to create the projects within this repository.  The version used is: Luna Service Release 1a (4.4.1).
 
+Eclipse can be customized in many ways, by clicking Window->Preferences.  This repository also contains a preferences file called [PaulsEclipsePrefs.epf](PaulsEclipsePrefs.epf) which provides the preferences I (Paul Rancuret) prefer to use on my computer.  You can set up your eclipse environment however you wish.  If you want to try importing my preferences as a starting point, you can do so using the following steps:
+* Clone this repository onto your computer, so you have a local copy of the files (if you haven't already done so)
+* Click File->Import...
+* Under the 'General' submenu, select 'Preferences,' and click 'Next >'
+* Browse to the PaulsEclipsePrefs.epf file on your local machine
+* Select which preferences you want to import (or click import all), then click Finish
+
 The following eclipse plug-ins were used when creating projects in this repository:
 * AVR Eclipse Plugin (version 2.4.1)
 * Uncrustify Plugin (version 1.0.0)
