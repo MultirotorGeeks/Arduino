@@ -1,0 +1,96 @@
+LIBRARY NAME:
+
+  Wire
+  
+AUTHOR:
+
+  Nicholas Zambetti
+  Modified 2012 by Todd Krein (todd@krein.org)
+
+DESCRIPTION:
+
+  This Wire project creates a library for using two wire/I2C communications on 
+  Arduino microcontrollers.
+
+DEPENDENCIES:
+
+  When used in a target application project, this library also requires that
+  the arduino board support library is linked as well.  For instance, the
+  ATmega328p chip on the ArduPilot or Duemilanove board requires linking the 
+  Arduino_Duemilanove_w__ATmega328 library in addition to this Wire one.
+  
+LIBRARY PROJECT SETUP:
+
+  This project was created using Eclipse IDE for C/C++ developers (version
+  4.4.1), with the AVR Eclipse plugin (version 2.4.1) installed.
+  
+  To create this project, click on File->New->C++ Project... and then enter
+  Wire as the project name and select the directory containing this 
+  README file as the project location.  Assuming you have checked this out from
+  a local git repository cloned from https://github.com/pmrancuret/Arduino, 
+  this path should be <YourPathToGitRepoLoc>\Arduino\libraries\Wire.  
+  
+  Then, under 'Project Type', select 'Empty Project' under the 'AVR Cross 
+  Target Static Library' type, and ensure AVR-GCC is selected as the toolchain.  
+  Click 'Next', then un-select the 'Debug' build configuration if you don't use
+  it, and click 'Next' again.  Finally, enter the correct processor type and 
+  clock speed you are using, and click Finish.  For the ArduPilot board, the
+  processor type is ATmega328p, and the clock speed is 16000000.
+  
+  Once the project is created, ensure the path for finding the Arduino.h file
+  is added.  To do this, right click the project and select Properties.  Then, 
+  expand the C/C++ build submenu on the left and click on 'Settings.'  In the 
+  right side, under the 'Tool Settings' tab, expand both the 'AVR Compiler' and
+  the 'AVR C++ Compiler' submenus.  Under each of these, select Directories, 
+  then click the 'Add...' button at the top right (with the green + sign).  In
+  this dialog, enter the path to the directory containing the Arduino.h file.
+  If your eclipse workspace is located at the top 'Arduino' folder of this
+  git repository, and the full repository is checked out including libraries, 
+  then the following path should work for the ATmega328p library:
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Once this project has been set up correctly, the library can be built by
+  right clicking the project and selecting 'Build.'  This should create a file
+  called libWire.a under the Release directory.  
+  
+TARGET APPLICATION PROJECT SETUP:
+
+  This library can be used in eclipse C++ projects of type 'AVR Cross Target
+  Application,' using the 'AVR-GCC' toolchain.
+  
+  In order to use this library in a target application project, this library
+  file and the Arduino support library must be linked into the build.  To do 
+  this, right click the project and select Properties.  Then, expand the 'C/C++ 
+  build' submenu on the left and click on 'Settings.'  In the 
+  right side, under the 'Tool Settings' tab, expand the 'AVR C++ Linker' 
+  submenu and click on 'Libraries.'  In the 'Libraries (-l)' box on the right, 
+  add the two libraries, called Wire and Arduino_Duemilanove_w__ATmega328 
+  (or whatever library is needed for your board).  Note that you should NOT 
+  enter the prefix 'lib' at the beginning, or the extension '.a' at the end of 
+  these names.  Also, ensure the Wire library is listed above the Arduino 
+  board library.  In the 'Libraries Path (-L)' box on the lower right, add the
+  paths to the two libraries.  If your eclipse workspace is located at the top 
+  'Arduino' folder of this git repository, and the full repository is checked 
+  out including libraries, then the following paths should work for the 
+  ATmega328p microcontroller:
+  "${workspace_loc}/libraries/Wire/Release"
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  The target application project will also need to have include paths set up to
+  find the Arduino.h header file, and the Wire.h header file.  To do this,
+  follow the same instructions as the above section for adding include paths in
+  the library project setup.  This time, ensure paths to both the Arduino.h
+  and to this library are provided.  If your eclipse workspace is located at 
+  the top 'Arduino' folder of this git repository, and the full repository is 
+  checked out including libraries, then the following paths should work for the 
+  ATmega328p library:
+  "${workspace_loc}/libraries/Wire"
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Finally, ensure that any source file in your target application project which
+  uses functions from this library first includes the library header file using:
+  #include "Wire.h"
+  
+EXAMPLE USAGE:
+
+  No example provided
