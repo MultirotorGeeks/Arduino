@@ -29,7 +29,7 @@ This project was created as an eclipse C++ project of type 'AVR Cross Target App
   
 To create the project in your eclipse workspace (assuming you have already checked out this folder from git), do the following:
 * Ensure the AVR Eclipse Plugin is installed in your version of Eclipse
-** To do this, Click Help->Install New Software... and type http://avr-eclipse.sourceforge.net/updatesite in the 'Work With:' prompt.  Then, check the box for 'AVR Eclipse Plugin' if it is not already installed and follow on-screen installation instructions.
+ * To do this, Click Help->Install New Software... and type http://avr-eclipse.sourceforge.net/updatesite in the 'Work With:' prompt.  Then, check the box for 'AVR Eclipse Plugin' if it is not already installed and follow on-screen installation instructions.
 * Click File->New->C++ Project
 * Enter IMU_Kalman next to 'Project Name'
 * Uncheck 'Use default location' and browse to the location of the 'IMU_Kalman' folder checked out from git.
