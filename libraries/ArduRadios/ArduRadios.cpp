@@ -59,6 +59,7 @@ ArduRadio :: ArduRadio ( ) {
   filtcoeffs [ CH_PITCH ]       = 0;                            // Initial value for filter coefficient for pitch channel.  This number, which must lie in the range [0,31], determines how much filtering to apply.  The larger the number, the lower the effective filter cutoff frequency.
   filtcoeffs [ CH_THROTTLE ]    = 0;                            // Initial value for filter coefficient for throttle channel.  This number, which must lie in the range [0,31], determines how much filtering to apply.  The larger the number, the lower the effective filter cutoff frequency.
   filtcoeffs [ CH_RUDDER ]      = 0;                            // Initial value for filter coefficient for rudder channel.  This number, which must lie in the range [0,31], determines how much filtering to apply.  The larger the number, the lower the effective filter cutoff frequency.
+  initialized                   = false;                        // Initial value for Logic value which tells whether or not the Radios class instance has been properly initialized.
   return;
 } // end of ArduRadio Constructor Function
 
@@ -128,6 +129,9 @@ uint8_t ArduRadio :: groundInitNoFilt ( void ) {
   radio_offsets [ CH_PITCH ]    = PITCH_INITIAL - ( meanRadioVals [ CH_PITCH ] >> 4 );       // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
   radio_offsets [ CH_THROTTLE ] = THROTTLE_INITIAL - ( meanRadioVals [ CH_THROTTLE ] >> 4 ); // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
   radio_offsets [ CH_RUDDER ]   = RUDDER_INITIAL - ( meanRadioVals [ CH_RUDDER ] >> 4 );     // Set offset for roll axis to achieve a new average right at the desired initial value.  right shifting by four (divide by 16) corrects the scaling factor added above in the delta
+
+  if ( rtn == RADIO_RTN_SUCCESS ) // if initialization completed succesfully
+    initialized = true;           // set flag indicating initializtion is complete
 
   return rtn;
 } // end of groundInitNoFilt()
@@ -238,6 +242,9 @@ uint8_t ArduRadio :: groundInitFilt ( uint8_t *filtCoeffs ) {
   if ( rtn == RADIO_RTN_SUCCESS ) // if no problems occurred while setting filter coefficient
     use_filters = true;           // set flag indicating filters are used
 
+  if ( rtn == RADIO_RTN_SUCCESS ) // if initialization completed succesfully
+    initialized = true;           // set flag indicating initializtion is complete
+
   return rtn;
 } // end of groundInitFilt()
 
@@ -279,6 +286,9 @@ uint8_t ArduRadio :: airInitNoFilt ( void ) {
 
   // enable pin change interrupt 0 -  PCINT7..0
   PCICR |= _BV ( PCIE0 );
+
+  if ( rtn == RADIO_RTN_SUCCESS ) // if initialization completed succesfully
+    initialized = true;           // set flag indicating initializtion is complete
 
   return rtn;
 } // end of airInitNoFilt()
@@ -361,6 +371,9 @@ uint8_t ArduRadio :: airInitFilt ( uint8_t *filtCoeffs ) {
   if ( rtn == RADIO_RTN_SUCCESS ) // if no problems occurred while setting filter coefficient
     use_filters = true;           // set flag indicating filters are used
 
+  if ( rtn == RADIO_RTN_SUCCESS ) // if initialization completed succesfully
+    initialized = true;           // set flag indicating initializtion is complete
+
   return rtn;
 } // end of airInitFilt()
 
@@ -376,7 +389,10 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
   uint8_t  rtn = RADIO_RTN_SUCCESS; // value to return if succesful
   uint16_t tempvalue;               // temporary value used when filtering
 
-
+  if ( initialized == false )
+  {
+    rtn |= RADIO_RTN_NOINIT;
+  }
 
   if ( use_filters ) // if filters are used
   {
@@ -390,7 +406,7 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
     }
     else
     {
-      rtn                  = RADIO_RTN_FILTERR; // set return to indicate filter error
+      rtn                 |= RADIO_RTN_FILTERR; // set return to indicate filter error
       radio_in [ CH_ROLL ] = tempvalue;         // use unfiltered radio reading
     }
 
@@ -403,7 +419,7 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
     }
     else
     {
-      rtn                   = RADIO_RTN_FILTERR; // set return to indicate filter error
+      rtn                  |= RADIO_RTN_FILTERR; // set return to indicate filter error
       radio_in [ CH_PITCH ] = tempvalue;         // use unfiltered radio reading
     }
 
@@ -416,7 +432,7 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
     }
     else
     {
-      rtn                      = RADIO_RTN_FILTERR; // set return to indicate filter error
+      rtn                     |= RADIO_RTN_FILTERR; // set return to indicate filter error
       radio_in [ CH_THROTTLE ] = tempvalue;         // use unfiltered radio reading
     }
 
@@ -429,7 +445,7 @@ uint8_t ArduRadio :: read_radio ( uint16_t *radiovals ) {
     }
     else
     {
-      rtn                    = RADIO_RTN_FILTERR; // set return to indicate filter error
+      rtn                   |= RADIO_RTN_FILTERR; // set return to indicate filter error
       radio_in [ CH_RUDDER ] = tempvalue;         // use unfiltered radio reading
     }
 

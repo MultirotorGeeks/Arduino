@@ -28,6 +28,7 @@
 #define GNDINIT_DELAY_MS  20    // number of milliseconds delay inbetween each reading for average calculation during ground initialization
 #define RADIO_RTN_SUCCESS 0     // value to return on success when reading radio
 #define RADIO_RTN_FILTERR 1     // value to return when filtering error occurred while reading radio
+#define RADIO_RTN_NOINIT  2     // value to return when attempting to read without properly initializing the radio class
 
 // ArduRadio Class Definition
 /*
@@ -46,6 +47,7 @@ uint16_t radio_in [ 4 ];      // Four unsigned integers contain the latest read 
 int16_t  radio_offsets [ 4 ]; // Offset values for each radio channel
 
 boolean  use_filters;         // Logic value which determines whether or not to use any filters
+boolean  initialized;         // Logic value which tells whether or not the Radios class instance has been properly initialized.
 uint8_t  filtcoeffs [ 4 ];    // Filter coefficients for each channel.  This number, which must lie in the range [0,31], determines how much filtering to apply.  The larger the number, the lower the effective filter cutoff frequency.
 
 public:

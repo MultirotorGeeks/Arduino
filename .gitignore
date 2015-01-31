@@ -88,6 +88,9 @@ build/
 *.log
 *.scc
 *.asv
+*.mk
+*.map
+[Mm]akefile
 
 # Visual C++ cache files
 ipch/

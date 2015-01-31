@@ -1,0 +1,57 @@
+LIBRARY NAME:
+
+  ArduPilotBoardSupport
+  
+AUTHOR:
+
+  Arduino Supplied Library and Header Files
+
+DESCRIPTION:
+
+  This directory contains the libArduino_Duemilanove_w__ATmega328.a file,
+  which is a static library providing Arduino functions for the ATmega328p
+  microcontroller.  Also, the necessary header files are included.
+
+DEPENDENCIES:
+
+  None
+  
+TARGET APPLICATION PROJECT SETUP:
+
+  This library can be used in eclipse C++ projects of type 'AVR Cross Target
+  Application,' using the 'AVR-GCC' toolchain.
+  
+  In order to use this library in a target application project, this 
+  Arduino support library must be linked into the build.  To do 
+  this, right click the project and select Properties.  Then, expand the 'C/C++ 
+  build' submenu on the left and click on 'Settings.'  In the 
+  right side, under the 'Tool Settings' tab, expand the 'AVR C++ Linker' 
+  submenu and click on 'Libraries.'  In the 'Libraries (-l)' box on the right, 
+  add the library, called Arduino_Duemilanove_w__ATmega328.  Note that you 
+  should NOT enter the prefix 'lib' at the beginning, or the extension '.a' at 
+  the end of these names.  In the 'Libraries Path (-L)' box on the lower right, 
+  add the path to the library.  If your eclipse workspace is located at the top 
+  'Arduino' folder of this git repository, and the full repository is checked 
+  out including libraries, then the following paths should work for the 
+  ATmega328p microcontroller:
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  The target application project will also need to have include paths set up to
+  find the Arduino.h header file.  To do this, right click the project and 
+  select Properties.  Then, expand the C/C++ build submenu on the left and click 
+  on 'Settings.'  In the right side, under the 'Tool Settings' tab, expand both 
+  the 'AVR Compiler' and the 'AVR C++ Compiler' submenus.  Under each of these, 
+  select Directories, then click the 'Add...' button at the top right (with the 
+  green + sign).  In this dialog, enter the path to the directory containing the 
+  Arduino.h file. If your eclipse workspace is located at the top 'Arduino' 
+  folder of this git repository, and the full repository is checked out including 
+  libraries, then the following path should work for the ATmega328p library:
+  "${workspace_loc}/libraries/ArduPilotBoardSupport"
+  
+  Finally, ensure that any source file in your target application project which
+  uses functions from this library first includes the library header file using:
+  #include "ArduRadios.h"
+  
+EXAMPLE USAGE:
+
+  None provided
