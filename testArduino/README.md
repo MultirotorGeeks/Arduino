@@ -13,6 +13,7 @@ This project creates code for the ArduPilot board in order to test out various f
 # DEPENDENCIES
 
 * ArduRadios
+* ArduEEPROM
 * Arduino_Duemilanove_w__ATmega328
   
 # TARGET APPLICATION PROJECT SETUP
@@ -32,8 +33,10 @@ To create the project in your eclipse workspace (assuming you have already check
   
 In order to use this target application project, all library files listed in the dependencies section must all be linked into the build.  To do this, right click the project and select Properties.  Then, expand the 'C/C++ build' submenu on the left and click on 'Settings.'  In the right side, under the 'Tool Settings' tab, expand the 'AVR C++ Linker' submenu and click on 'Libraries.'  In the 'Libraries (-l)' box on the right, add all the library names exactly as listed in the DEPENDENCIES section of this document.  Note that you should NOT enter the prefix 'lib' at the beginning, or the extension '.a' at the end of these library names.  Also, ensure that they are listed in the same order as described in this file.  In the 'Libraries Path (-L)' box on the lower right, add the paths to the libraries.  If your eclipse workspace is located at the top 'Arduino' folder of this git repository, and the full repository is checked out including libraries, then the following paths should work:
 * "${workspace_loc}/libraries/ArduRadios/Release"
+* "${workspace_loc}/libraries/ArduEEPROM/Release"
 * "${workspace_loc}/libraries/ArduPilotBoardSupport"
  
 The target application project will also need to have include paths set up to find the library header files.  To do this, right click the project and select Properties.  Then, expand the C/C++ build submenu on the left and click on 'Settings.'  In the right side, under the 'Tool Settings' tab, expand both the 'AVR Compiler' and the 'AVR C++ Compiler' submenus.  Under each of these, select Directories, then click the 'Add...' button at the top right (with the green + sign).  In this dialog, enter the paths to the directories containing each of the required header files. If your eclipse workspace is located at the top 'Arduino' folder of this git repository, and the full repository is checked out including libraries, then the following path should work for the libraries:
 * "${workspace_loc}/libraries/ArduRadios"
+* "${workspace_loc}/libraries/ArduEEPROM"
 * "${workspace_loc}/libraries/ArduPilotBoardSupport"
